@@ -1,3 +1,5 @@
+import { readFileSync } from "fs";
+
 export async function interpret(
   source: string,
   memtape: number[],
@@ -66,6 +68,7 @@ export async function interpret(
         break;
     }
     await onInstrFinish();
+    codeIndex++;
   }
 }
 
@@ -81,3 +84,23 @@ function wrapSub(v: number, max: number) {
   }
   return v - 1;
 }
+
+export async function d() {
+  console.log("START");
+  let t = readFileSync("b.txt", "utf-8");
+  const textbuff = "528419";
+  let textbuffIndex = -1;
+  const reader = async () => {
+    textbuffIndex++;
+    process.stdout.write(textbuff[textbuffIndex]);
+    return textbuff[textbuffIndex];
+  };
+  const writer = (x: string) => process.stdout.write(x);
+  const tape = new Array(300000).fill(0);
+  //console.log(tape);
+
+  await interpret(t, tape, 0, async () => {}, writer, reader, 255);
+  console.log("END");
+}
+
+d();
