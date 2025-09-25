@@ -6,6 +6,10 @@ import { SnipperRunBtns } from "./SnippetRunBtns";
 export default function Page() {
   const [memtape, setMemtape] = useState<number[]>(tmpMemtapeInit);
 
+  const updateCellVal = (nv: number, i: number) => {
+    setMemtape(memtape.toSpliced(i, 1, nv));
+  };
+
   return (
     <div className="p-3 ">
       <SnipperRunBtns
@@ -21,6 +25,7 @@ export default function Page() {
       <MemtapeRowDisplay
         memtape={memtape}
         blockDescription={tmpBlockDescription}
+        updateCellVal={updateCellVal}
       />
     </div>
   );
