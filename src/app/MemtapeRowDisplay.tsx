@@ -79,8 +79,7 @@ function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
           // </div>
           <div key={i}>
             <input
-              key={i}
-              className="min-w-[3ch] border-none p-0 m-0 focus:outline-none w-auto bg-emerald-700"
+              className="appearance-none min-w-[3ch] border-none p-0 m-0 focus:outline-none bg-emerald-700"
               value={v}
               onChange={(e) => onChange(e, i)}
               onKeyDown={(e) => onKeydown(e, i)}
