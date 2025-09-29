@@ -1,4 +1,4 @@
-import { ChangeEvent, CSSProperties, KeyboardEvent, useState } from "react";
+import { CSSProperties, FocusEvent, KeyboardEvent } from "react";
 import { Grid } from "react-window";
 
 export function MemtapeRowDisplay({
@@ -55,17 +55,24 @@ function GridCellComponent({
 }
 
 function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
-  const [localVal, setLocalVal] = useState([...values]);
-  const onChange = (e: ChangeEvent<HTMLInputElement>, offset: number) => {
-    const val = Number(e.target.value.replace(/\D/g, ""));
-    setLocalVal(localVal.toSpliced(offset, 1, val));
+  const submit = (
+    e: KeyboardEvent<HTMLDivElement> | FocusEvent<HTMLDivElement, Element>,
+    offset: number
+  ) => {
+    const val = Number(e.currentTarget.innerHTML.replace(/\D/g, ""));
+    e.currentTarget.innerHTML = val.toString();
+    updateMemCell(val, offset);
   };
-  const onKeydown = (e: KeyboardEvent<HTMLInputElement>, offset: number) => {
+  const onKeydown = (e: KeyboardEvent<HTMLDivElement>, offset: number) => {
+    console.log(e);
     if (e.key !== "Enter") {
       return;
     }
-    updateMemCell(localVal[offset], offset);
+    e.preventDefault();
+    e.currentTarget.blur();
+    submit(e, offset);
   };
+
   return (
     <div>
       <div className="p-2 bg-gradient-to-br from-orange-300 to-amber-300 rounded-md text-center">
@@ -73,19 +80,28 @@ function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
       </div>
       <div className="h-1"></div>
       <div className="p-2 bg-gradient-to-br from-orange-500 to-amber-500 text-center rounded-md">
-        {localVal.map((v, i) => (
+        {values.map((v, i) => (
           // <div key={i} contentEditable="plaintext-only" suppressContentEditableWarning className="min-w-[3ch]" onInput={}>
 
           // </div>
           <div key={i}>
-            <input
+            <div
+              contentEditable="plaintext-only"
+              suppressContentEditableWarning
+              className="mi-w-[3ch]"
+              onBlur={(e) => submit(e, i)}
+              onKeyDown={(e) => onKeydown(e, i)}
+            >
+              {values[i]}
+            </div>
+            {/* <input
               className="appearance-none min-w-[3ch] border-none p-0 m-0 focus:outline-none bg-emerald-700"
               value={v}
               onChange={(e) => onChange(e, i)}
               onKeyDown={(e) => onKeydown(e, i)}
               type="text"
               inputMode="numeric"
-            />
+            /> */}
           </div>
         ))}
       </div>
