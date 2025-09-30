@@ -1,11 +1,12 @@
 import { CSSProperties, FocusEvent, KeyboardEvent } from "react";
-import { Grid } from "react-window";
+import { Grid, useGridRef } from "react-window";
 
 export function MemtapeRowDisplay({
   memtape,
   updateCellVal,
   blockDescription,
 }: MemtapeRowDisplayProps) {
+  const gridRef = useGridRef(null);
   const cellsPerBlock = blockDescription.length;
   const blockedVals = Array.from({
     length: Math.ceil(memtape.length / cellsPerBlock),
@@ -15,6 +16,7 @@ export function MemtapeRowDisplay({
     <div className="p-2 bg-gray-800 rounded-xl border-2 border-cyan-800 h-50">
       {/**TODO: remove hardcoded height */}
       <Grid
+        gridRef={gridRef}
         cellComponent={GridCellComponent}
         cellProps={{
           blockedVals,
@@ -26,7 +28,7 @@ export function MemtapeRowDisplay({
         columnCount={blockedVals.length}
         rowCount={1}
         rowHeight="100%"
-        columnWidth={200}
+        columnWidth={100}
       ></Grid>
     </div>
   );
@@ -40,30 +42,28 @@ function GridCellComponent({
 }: GridCellComponentProp) {
   console.log(JSON.stringify(style));
   return (
-    <div style={style}>
-      <div className="p-2">
-        <MemBlock
-          values={blockedVals[columnIndex]}
-          index={columnIndex}
-          updateMemCell={(nv, co) =>
-            updateCellVal(nv, columnIndex * cellsPerBlock + co)
-          }
-        />
-      </div>
+    <div style={style} className="p-2">
+      <MemBlock
+        values={blockedVals[columnIndex]}
+        index={columnIndex}
+        updateMemCell={(nv, co) =>
+          updateCellVal(nv, columnIndex * cellsPerBlock + co)
+        }
+      />
     </div>
   );
 }
 
 function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
   const submit = (
-    e: KeyboardEvent<HTMLDivElement> | FocusEvent<HTMLDivElement, Element>,
+    e: KeyboardEvent<HTMLSpanElement> | FocusEvent<HTMLSpanElement, Element>,
     offset: number
   ) => {
     const val = Number(e.currentTarget.innerHTML.replace(/\D/g, ""));
     e.currentTarget.innerHTML = val.toString();
     updateMemCell(val, offset);
   };
-  const onKeydown = (e: KeyboardEvent<HTMLDivElement>, offset: number) => {
+  const onKeydown = (e: KeyboardEvent<HTMLSpanElement>, offset: number) => {
     console.log(e);
     if (e.key !== "Enter") {
       return;
@@ -72,7 +72,7 @@ function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
     e.currentTarget.blur();
     submit(e, offset);
   };
-
+  console.log("RENDERERD MEMBLOCK: ", index);
   return (
     <div>
       <div className="p-2 bg-gradient-to-br from-orange-300 to-amber-300 rounded-md text-center">
@@ -81,27 +81,15 @@ function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
       <div className="h-1"></div>
       <div className="p-2 bg-gradient-to-br from-orange-500 to-amber-500 text-center rounded-md">
         {values.map((v, i) => (
-          // <div key={i} contentEditable="plaintext-only" suppressContentEditableWarning className="min-w-[3ch]" onInput={}>
-
-          // </div>
-          <div key={i}>
-            <div
-              contentEditable="plaintext-only"
-              suppressContentEditableWarning
-              className="mi-w-[3ch]"
-              onBlur={(e) => submit(e, i)}
-              onKeyDown={(e) => onKeydown(e, i)}
-            >
-              {values[i]}
-            </div>
-            {/* <input
-              className="appearance-none min-w-[3ch] border-none p-0 m-0 focus:outline-none bg-emerald-700"
-              value={v}
-              onChange={(e) => onChange(e, i)}
-              onKeyDown={(e) => onKeydown(e, i)}
-              type="text"
-              inputMode="numeric"
-            /> */}
+          <div
+            key={i}
+            contentEditable="plaintext-only"
+            suppressContentEditableWarning
+            className="min-w-[3ch] bg-cyan-500 w-auto p-0"
+            onBlur={(e) => submit(e, i)}
+            onKeyDown={(e) => onKeydown(e, i)}
+          >
+            {v}
           </div>
         ))}
       </div>
