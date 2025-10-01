@@ -45,7 +45,7 @@ function GridCellComponent({
 }: GridCellComponentProp) {
   const highlightIndex =
     memptr >= columnIndex * cellsPerBlock &&
-    memptr < columnIndex * cellsPerBlock + 1
+    memptr < (columnIndex + 1) * cellsPerBlock
       ? memptr % cellsPerBlock
       : undefined;
   return (
