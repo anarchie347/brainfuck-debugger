@@ -1,13 +1,13 @@
 "use client";
-import { useRef } from "react";
+import { useState } from "react";
 import { MemtapeRowDisplay } from "./MemtapeRowDisplay";
 import { SnipperRunBtns } from "./SnippetRunBtns";
 
 export default function Page() {
-  const memtape = useRef(tmpMemtapeInit);
-  const memptr = useRef(0);
+  const [memtape, setMemtape] = useState(tmpMemtapeInit);
+  const [memptr, setMemptr] = useState(0);
   const updateCellVal = (nv: number, i: number) => {
-    memtape.current[i] = nv;
+    setMemtape((old) => old.toSpliced(i, 1, nv));
     console.log("nv: ", nv);
   };
 
@@ -24,8 +24,8 @@ export default function Page() {
       />
       <div className="h-3"></div>
       <MemtapeRowDisplay
-        memtape={memtape.current}
-        memptr={memptr.current}
+        memtape={memtape}
+        memptr={memptr}
         blockDescription={tmpBlockDescription}
         updateCellVal={updateCellVal}
       />
