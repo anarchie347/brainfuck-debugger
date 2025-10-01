@@ -3,6 +3,7 @@ import { Grid, useGridRef } from "react-window";
 
 export function MemtapeRowDisplay({
   memtape,
+  memptr,
   updateCellVal,
   blockDescription,
 }: MemtapeRowDisplayProps) {
@@ -22,6 +23,7 @@ export function MemtapeRowDisplay({
           blockedVals,
           updateCellVal,
           cellsPerBlock,
+          memptr,
           columnIndex: undefined as never, //for TS linting
           style: undefined as never,
         }}
@@ -38,9 +40,14 @@ function GridCellComponent({
   blockedVals,
   updateCellVal,
   cellsPerBlock,
+  memptr,
   style,
 }: GridCellComponentProp) {
-  console.log(JSON.stringify(style));
+  const highlightIndex =
+    memptr >= columnIndex * cellsPerBlock &&
+    memptr < columnIndex * cellsPerBlock + 1
+      ? memptr % cellsPerBlock
+      : undefined;
   return (
     <div style={style} className="p-2">
       <MemBlock
@@ -49,12 +56,18 @@ function GridCellComponent({
         updateMemCell={(nv, co) =>
           updateCellVal(nv, columnIndex * cellsPerBlock + co)
         }
+        highlightIndex={highlightIndex}
       />
     </div>
   );
 }
 
-function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
+function MemBlock({
+  index,
+  values,
+  updateMemCell,
+  highlightIndex,
+}: MemBlockProps) {
   const submit = (
     e: KeyboardEvent<HTMLSpanElement> | FocusEvent<HTMLSpanElement, Element>,
     offset: number
@@ -85,7 +98,9 @@ function MemBlock({ index, values, updateMemCell }: MemBlockProps) {
             key={i}
             contentEditable="plaintext-only"
             suppressContentEditableWarning
-            className="min-w-[3ch] bg-cyan-500 w-auto p-0"
+            className={`min-w-[3ch] ${
+              highlightIndex === i ? "bg-emerald-600" : "bg-cyan-500"
+            } w-auto p-0`}
             onBlur={(e) => submit(e, i)}
             onKeyDown={(e) => onKeydown(e, i)}
           >
@@ -102,15 +117,18 @@ export interface GridCellComponentProp {
   blockedVals: number[][];
   updateCellVal: (newVal: number, index: number) => void;
   cellsPerBlock: number;
+  memptr: number;
 }
 export interface MemBlockProps {
   index: number;
   values: number[];
   updateMemCell: (newVal: number, cellOffset: number) => void;
+  highlightIndex?: number;
 }
 
 export interface MemtapeRowDisplayProps {
   memtape: number[];
+  memptr: number;
   updateCellVal: (newVal: number, index: number) => void;
   blockDescription: string[];
 }

@@ -5,6 +5,7 @@ import { SnipperRunBtns } from "./SnippetRunBtns";
 
 export default function Page() {
   const memtape = useRef(tmpMemtapeInit);
+  const memptr = useRef(0);
   const updateCellVal = (nv: number, i: number) => {
     memtape.current[i] = nv;
     console.log("nv: ", nv);
@@ -24,6 +25,7 @@ export default function Page() {
       <div className="h-3"></div>
       <MemtapeRowDisplay
         memtape={memtape.current}
+        memptr={memptr.current}
         blockDescription={tmpBlockDescription}
         updateCellVal={updateCellVal}
       />
