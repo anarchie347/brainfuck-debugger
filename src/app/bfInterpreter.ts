@@ -1,12 +1,14 @@
+import { BFState } from "./types";
+
 export async function interpret(
   source: string,
   memtape: number[],
   memptr: number,
-  onInstrFinish: () => Promise<void>,
+  onInstrFinish: (state: BFState) => Promise<void>,
   writeChr: (chr: string) => void,
   readChr: () => Promise<string>,
   cellMaxVal: number
-) {
+): Promise<BFState> {
   const loopIndexStack: number[] = [];
   let codeIndex: number = 0;
 
@@ -65,9 +67,10 @@ export async function interpret(
         }
         break;
     }
-    await onInstrFinish();
+    await onInstrFinish({ memtape, memptr });
     codeIndex++;
   }
+  return { memtape, memptr };
 }
 
 function wrapAdd(v: number, max: number) {

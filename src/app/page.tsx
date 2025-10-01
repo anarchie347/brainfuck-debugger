@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { MemtapeRowDisplay } from "./MemtapeRowDisplay";
 import { SnipperRunBtns } from "./SnippetRunBtns";
+import { interpret } from "./bfInterpreter";
 
 export default function Page() {
   const [memtape, setMemtape] = useState(tmpMemtapeInit);
@@ -10,13 +11,24 @@ export default function Page() {
     setMemtape((old) => old.toSpliced(i, 1, nv));
     console.log("nv: ", nv);
   };
-
+  console.log("QQQ", memtape[memptr]);
   return (
-    <div className="p-3 ">
+    <div className="p-3">
       <SnipperRunBtns
         snippets={tmpSnips}
         runFunc={async (s: string) => {
-          alert(s);
+          const result = await interpret(
+            s,
+            memtape,
+            memptr,
+            async () => {},
+            console.log,
+            async () => "T",
+            255
+          );
+          setMemtape([...result.memtape]);
+          setMemptr(result.memptr);
+          console.log(memtape);
         }}
       />
       <div className="h-3"></div>

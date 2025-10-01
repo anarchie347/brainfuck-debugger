@@ -7,6 +7,7 @@ export function MemtapeRowDisplay({
   updateCellVal,
   blockDescription,
 }: MemtapeRowDisplayProps) {
+  console.warn("MTRD");
   const gridRef = useGridRef(null);
   const cellsPerBlock = blockDescription.length;
   const blockedVals = Array.from({
