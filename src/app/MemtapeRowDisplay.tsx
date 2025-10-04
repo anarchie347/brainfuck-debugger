@@ -15,7 +15,7 @@ export function MemtapeRowDisplay({
   }).map((_, i) => memtape.slice(i * cellsPerBlock, (i + 1) * cellsPerBlock));
   console.log(blockedVals.length);
   return (
-    <div className="p-2 bg-gray-800 rounded-xl border-2 border-cyan-800 h-50">
+    <div className=" h-50">
       {/**TODO: remove hardcoded height */}
       <Grid
         gridRef={gridRef}

@@ -2,7 +2,7 @@ import { CodeSnippet } from "./types";
 
 export function SnipperRunBtns({ snippets, runFunc }: SnippetRunBtnsProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto p-2 bg-gray-800 rounded-xl border-2 border-cyan-800">
+    <div className="flex gap-2 overflow-x-auto">
       {snippets.map((s, i) => (
         <div className="flex-none p-2" key={i}>
           <button

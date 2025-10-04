@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
-import { MemtapeRowDisplay } from "./MemtapeRowDisplay";
-import { SnipperRunBtns } from "./SnippetRunBtns";
 import { interpret } from "./bfInterpreter";
+import { MemtapeRowDisplay } from "./MemtapeRowDisplay";
+import { Segment } from "./Segment";
+import { SnipperRunBtns } from "./SnippetRunBtns";
 
 export default function Page() {
   const [memtape, setMemtape] = useState(tmpMemtapeInit);
@@ -14,30 +15,35 @@ export default function Page() {
   console.log("QQQ", memtape[memptr]);
   return (
     <div className="p-3">
-      <SnipperRunBtns
-        snippets={tmpSnips}
-        runFunc={async (s: string) => {
-          const result = await interpret(
-            s,
-            memtape,
-            memptr,
-            async () => {},
-            console.log,
-            async () => "T",
-            255
-          );
-          setMemtape([...result.memtape]);
-          setMemptr(result.memptr);
-          console.log(memtape);
-        }}
-      />
+      <Segment>
+        <SnipperRunBtns
+          snippets={tmpSnips}
+          runFunc={async (s: string) => {
+            const result = await interpret(
+              s,
+              memtape,
+              memptr,
+              async () => {},
+              console.log,
+              async () => "T",
+              255
+            );
+            setMemtape([...result.memtape]);
+            setMemptr(result.memptr);
+            console.log(memtape);
+          }}
+        />
+      </Segment>
+
       <div className="h-3"></div>
-      <MemtapeRowDisplay
-        memtape={memtape}
-        memptr={memptr}
-        blockDescription={tmpBlockDescription}
-        updateCellVal={updateCellVal}
-      />
+      <Segment>
+        <MemtapeRowDisplay
+          memtape={memtape}
+          memptr={memptr}
+          blockDescription={tmpBlockDescription}
+          updateCellVal={updateCellVal}
+        />
+      </Segment>
     </div>
   );
 }
