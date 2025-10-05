@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { interpret } from "./bfInterpreter";
+import { IOBuffers } from "./IOBuffers";
 import { MemtapeRowDisplay } from "./MemtapeRowDisplay";
 import { Segment } from "./Segment";
 import { SnipperRunBtns } from "./SnippetRunBtns";
@@ -43,6 +44,8 @@ export default function Page() {
           updateCellVal={updateCellVal}
         />
       </Segment>
+      <div className="h-3"></div>
+      <IOBuffers />
     </div>
   );
 }
