@@ -1,8 +1,18 @@
-import { CodeSnippet } from "./types";
+import { useState } from "react";
+import { UploadFileBtn } from "./UploadFileBtn";
 
-export function SnipperRunBtns({ snippets, runFunc }: SnippetRunBtnsProps) {
+export function SnipperRunBtns({ runFunc }: SnippetRunBtnsProps) {
+  const [snippets, setSnippets] = useState([] as Snippet[]);
   return (
     <div className="flex gap-2 overflow-x-auto">
+      <div className="flex-none p-2">
+        <UploadFileBtn
+          text="+"
+          onFileUploaded={(contents, filename) =>
+            setSnippets((old) => [...old, { name: filename, code: contents }])
+          }
+        />
+      </div>
       {snippets.map((s, i) => (
         <div className="flex-none p-2" key={i}>
           <button
@@ -17,7 +27,12 @@ export function SnipperRunBtns({ snippets, runFunc }: SnippetRunBtnsProps) {
   );
 }
 
+function uploadNewSnippet() {}
+
+interface Snippet {
+  code: string;
+  name: string;
+}
 export interface SnippetRunBtnsProps {
-  snippets: CodeSnippet[];
   runFunc: (source: string) => Promise<void>;
 }
