@@ -13,7 +13,6 @@ export function MemtapeRowDisplay({
   const blockedVals = Array.from({
     length: Math.ceil(memtape.length / cellsPerBlock),
   }).map((_, i) => memtape.slice(i * cellsPerBlock, (i + 1) * cellsPerBlock));
-  console.log(blockedVals.length);
   return (
     <div className=" h-50">
       {/**TODO: remove hardcoded height */}
@@ -78,7 +77,6 @@ function MemBlock({
     updateMemCell(val, offset);
   };
   const onKeydown = (e: KeyboardEvent<HTMLSpanElement>, offset: number) => {
-    console.log(e);
     if (e.key !== "Enter") {
       return;
     }
@@ -86,7 +84,6 @@ function MemBlock({
     e.currentTarget.blur();
     submit(e, offset);
   };
-  console.log("RENDERERD MEMBLOCK: ", index);
   return (
     <div>
       <div className="p-2 bg-gradient-to-br from-orange-300 to-amber-300 rounded-md text-center">
