@@ -1,28 +1,31 @@
 import { Ref, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { Segment } from "./Segment";
 
-export function IOBuffers({ ref, copyInToOut }: IOBuffersProps) {
+export function IOBuffers({ ref }: IOBuffersProps) {
   const [inContents, setInContents] = useState("");
   const inContentsRef = useRef(""); // See bottom for explanation
   const [outContnets, setOutContents] = useState("");
+  const [copyInToOut, setCopyInToOut] = useState(true);
+  const copyInToOutRef = useRef(true);
 
-  // keep ref updated with any state change from either 'read' or use input
+  // keep ref updated with any state change from either 'read' or user input
   inContentsRef.current = inContents;
+  copyInToOutRef.current = copyInToOut;
   const write = useCallback(
     (chr: string) => {
       setOutContents((old) => old + chr);
     },
-    [setOutContents]
+    [setOutContents] // for reasons explained at the bottom of this comment, these values must NEVER be re-assigned and cause a re-evaluation of the callback
   );
   const read = useCallback(() => {
-    console.log(inContentsRef.current);
+    console.warn("CALCED READ");
     const firstChar = inContentsRef.current[0];
     setInContents(inContentsRef.current.substring(1));
-    if (copyInToOut) {
+    if (copyInToOutRef.current) {
       write(firstChar);
     }
     return firstChar;
-  }, [setInContents, copyInToOut, write, inContentsRef]);
+  }, [setInContents, copyInToOutRef, write, inContentsRef]); // for reasons explained at the bottom of this comment, these values must NEVER be re-assigned and cause a re-evaluation of the callback
 
   useImperativeHandle(ref, () => ({ write, read } satisfies IOBuffersHandle), [
     write,
@@ -36,11 +39,22 @@ export function IOBuffers({ ref, copyInToOut }: IOBuffersProps) {
           <div className="w-full text-center white text-white text-4xl">
             IN Buffer
           </div>
-          <input
-            className="w-full bg-gradient-to-br from-cyan-200 to-blue-300 align-top text-2xl"
-            onChange={(e) => setInContents(e.target.value)}
-            value={inContents}
-          />
+          <div className="flex gap-1">
+            <input
+              className="w-full bg-gradient-to-br from-cyan-200 to-blue-300 align-top text-2xl"
+              onChange={(e) => setInContents(e.target.value)}
+              value={inContents}
+            />
+            <div className="text-white align-middle text-center h-full">
+              Passthrough:
+            </div>
+            <input
+              className=""
+              type="checkbox"
+              checked={copyInToOut}
+              onChange={(e) => setCopyInToOut(e.target.checked)}
+            />
+          </div>
         </Segment>
       </div>
       <div className="flex-1">
@@ -61,7 +75,6 @@ export function IOBuffers({ ref, copyInToOut }: IOBuffersProps) {
 
 export interface IOBuffersProps {
   ref: Ref<unknown>;
-  copyInToOut: boolean;
 }
 
 export interface IOBuffersHandle {
@@ -85,3 +98,5 @@ because the 'read' function is exposed through 'useImperativeHandle', changes to
  'write' does not depend on any possibly-re-assigned values as it uses an anonymous update function to mutate the outCOntents buffer,
  so that is set once by useCallback and never changes.
  */
+
+// above explanation is not quite right - research useCallback
