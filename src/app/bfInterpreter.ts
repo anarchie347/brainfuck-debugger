@@ -6,7 +6,7 @@ export async function interpret(
   memptr: number,
   onInstrFinish: (state: BFState) => Promise<void>,
   writeChr: (chr: string) => void,
-  readChr: () => Promise<string>,
+  readChr: (() => Promise<string>) | (() => string),
   cellMaxVal: number
 ): Promise<BFState> {
   const loopIndexStack: number[] = [];

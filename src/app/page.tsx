@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { interpret } from "./bfInterpreter";
-import { IOBuffers } from "./IOBuffers";
+import { IOBuffers, IOBuffersHandle } from "./IOBuffers";
 import { MemtapeRowDisplay } from "./MemtapeRowDisplay";
 import { Segment } from "./Segment";
 import { SnipperRunBtns } from "./SnippetRunBtns";
@@ -9,6 +9,8 @@ import { SnipperRunBtns } from "./SnippetRunBtns";
 export default function Page() {
   const [memtape, setMemtape] = useState(tmpMemtapeInit);
   const [memptr, setMemptr] = useState(0);
+  const ioBufRef = useRef<undefined | IOBuffersHandle>(undefined);
+  console.warn("PAGERENDER");
   const updateCellVal = (nv: number, i: number) => {
     setMemtape((old) => old.toSpliced(i, 1, nv));
     console.log("nv: ", nv);
@@ -24,8 +26,8 @@ export default function Page() {
               memtape,
               memptr,
               async () => {},
-              console.log,
-              async () => "T",
+              ioBufRef.current?.write!,
+              ioBufRef.current?.read!,
               255
             );
             setMemtape([...result.memtape]);
@@ -45,7 +47,7 @@ export default function Page() {
         />
       </Segment>
       <div className="h-3"></div>
-      <IOBuffers />
+      <IOBuffers copyInToOut={true} ref={ioBufRef} />
     </div>
   );
 }
